@@ -2,6 +2,7 @@ import openai
 import pandas as pd
 import os
 import streamlit as st
+
 from streamlit_chat import message
 
 openai.api_key = "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"
@@ -91,12 +92,15 @@ def main():
 
 
 def home():
-    st.title("MetaTagPro")
-    st.markdown("""MetaTagPro is a powerful tool that drives data management efficiency and increases marketplace value with cutting-edge LLMs. \n
+
+    st.title("MetaTagPro - Data Assistant")
+    st.markdown("""MetaTagPro - Data Assistant is a powerful tool that drives data management efficiency, assists with data analysis, providing SQL code by leveraging cutting-edge LLMs. \n
 • Easily understand existing datasets with structured, human-readable descriptions and automated metadata management. \n
-• Advanced capabilities include generating data product descriptions, creating data dictionaries and suggesting potential use cases, accelerating technical documentation creation. \n
-• MetaTagPro can also summarise ETL code in plain English and derive data lineage without SME input. \n
-• Identify PII and sensitive information, providing an extra layer of governance to your data management processes""")
+• Advanced capabilities include generating data product descriptions, creating data dictionaries and suggesting potential use cases and improvements, accelerating technical documentation creation. \n
+• Identify PII and sensitive information, providing an extra layer of governance to your data management processes. \n
+• For the technical user, the Data Assistant can provide SQL code based on plain english user input in proper code format from the data provided. \n
+• The Data Assistant can propose potential improvements in the structure/architecture of the data provided. \n
+""")
 
 
 def business(folder, model, metatag_system_prompt, init_prompt):
@@ -118,15 +122,14 @@ def business(folder, model, metatag_system_prompt, init_prompt):
                 df = pd.read_csv(file_path)
                 non_null_rows = df.iloc[:5]
                 st.markdown(f"### Dataset sample: `{filename}`")
-                st.write(non_null_rows)
+                st.table(non_null_rows)
         st.session_state.data_loaded = True
 
     st.sidebar.markdown("----")
 
-    questions = {'Summary': 'Give me only the first summary section',
-                 'Use_Case': 'Give me only the suggested use cases section',
+    questions = {'Summary': 'Give me the summary of the data in one paragraph',
+                 'Use_Case': 'Give me the potential use cases of this data',
                  'Data_Description': 'Give me only the data description section',
-                 'PII': 'I want to know which attributes contain PII data?',
                  'Sensitive_Info': 'Which attributes contain personal sensitive information?'}
 
     if st.sidebar.button("Generate Contents") or st.session_state.content_generated:
@@ -138,7 +141,7 @@ def business(folder, model, metatag_system_prompt, init_prompt):
             # conversation_history.append({"role": "assistant", "content": output})
             with st.expander(questions[q]):
                 st.write(output)
-                st.button("Export " + q + " to Data Marketplace")
+                # st.button("Export " + q + " to Data Marketplace")
 
 
 def tech(model, metatag_system_prompt, init_prompt):
@@ -168,12 +171,12 @@ def tech(model, metatag_system_prompt, init_prompt):
     st.sidebar.markdown("----")
 
     questions = {'Summary': 'Can you give me a brief one paragraph summary of the data',
-                 'Key components': 'Give me the key components of the data file',
                  'Structure': 'How is the data file structured',
-                 'Data_Description': 'Give me the data types present in the data, and any relationships you can find within it',
+                 'Data_Description': 'Give me the data types of the data present inside the columns in proper format that can be used for database table in bullet points',
                  'Dependencies': 'Are there any dependencies present in the data?',
-                 'Solution': 'Can you propose solutions based on what you have seen in the data in regards to structure or anything else',
-                 'SQL table': 'create a SQL table based on the above data'}
+                 'Relationships': 'Can you find any relationship between the columns in this data',
+                 'SQL table': 'create a SQL table based on the above data in proper code format, breaking it into several tables with primary keys.',
+                 'Data Model': 'Can you show the data model in tabular format if we create several SQL tables based on this data with primary key relationships in details'}
 
     # for the above table -> the input to the 'get SQL code'
 

@@ -5,7 +5,7 @@ import streamlit as st
 
 from streamlit_chat import message
 
-openai.api_key = "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"
+openai.api_key = "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"
 
 
 @st.cache_data
@@ -74,7 +74,7 @@ def main():
     
     """
 
-    menu = ["Home", "Business User", "Technical User"]
+    menu = ["Home", "Business User", "Technical User", "Technical User Two"]
     choice = st.sidebar.selectbox("Select your role", menu)
     st.sidebar.markdown("----")
 
@@ -89,6 +89,8 @@ def main():
         business(demo_folder, model, metatag_system_prompt, init_prompt)
     elif choice == "Technical User":
         tech(model, metatag_system_prompt, init_prompt)
+    elif choice == "Technical User Two":
+        techUserTwo(model, metatag_system_prompt, init_prompt)
 
 
 def home():
@@ -132,6 +134,7 @@ def business(folder, model, metatag_system_prompt, init_prompt):
                  'Data_Description': 'Give me only the data description section',
                  'Sensitive_Info': 'Which attributes contain personal sensitive information?'}
 
+    download_response = {}
     if st.sidebar.button("Generate Contents") or st.session_state.content_generated:
         for q in questions:
             # conversation_history.append({"role": "user", "content": questions[q]})
@@ -141,7 +144,56 @@ def business(folder, model, metatag_system_prompt, init_prompt):
             # conversation_history.append({"role": "assistant", "content": output})
             with st.expander(questions[q]):
                 st.write(output)
+                download_response[q] = output
                 # st.button("Export " + q + " to Data Marketplace")
+
+
+def techUserTwo(model, metatag_system_prompt, init_prompt):
+    if "content_generated" not in st.session_state:
+        st.session_state.content_generated = False
+
+    conversation_history = []
+    # conversation_history.append({"role": "assistant", "content": init_prompt})
+    st.title("For Technical User Two")
+    st.sidebar.markdown("----")
+
+    st.sidebar.markdown('----')
+
+    # downloadButton = st.sidebar.download_button("Download Responses")
+
+    # st.sidebar.markdown('----')
+
+    uploaded_files = st.sidebar.file_uploader(
+        "Select the source code to interpret", accept_multiple_files=True)
+
+    for uploaded_file in uploaded_files:
+        code_txt = uploaded_file.getvalue()
+        content = str(uploaded_file.name) + " " + str(code_txt)
+        conversation_history.append({"role": "user", "content": content})
+        st.write("filename:", uploaded_file.name)
+        st.code(code_txt.decode("utf-8"), language='python')
+
+    st.sidebar.markdown("----")
+
+    questions = {'Summary': 'give me a brief one paragraph summary of the uploaded data',
+                 'SQL table': 'create a SQL table based on the above data in proper code format, breaking it into several tables with primary keys and foreign keys if necessary.',
+                 'Data Model': 'Can you show the data model in tabular format if we create several SQL tables based on the above data dictionary with primary key relationships in details'}
+
+    # for the above table -> the input to the 'get SQL code'
+
+    if st.sidebar.button("Generate Contents") or st.session_state.content_generated:
+        for q in questions:
+            prompt = "\n".join([message["content"]
+                                for message in conversation_history])
+            prompt += '\n' + questions[q]
+
+            print(prompt)
+            output = generate_response(
+                metatag_system_prompt, prompt, model)
+            with st.expander(questions[q]):
+                st.write(output)
+                if q in ['README', 'Code']:
+                    st.button("Download " + q)
 
 
 def tech(model, metatag_system_prompt, init_prompt):
@@ -155,6 +207,10 @@ def tech(model, metatag_system_prompt, init_prompt):
 
     query = st.sidebar.text_input('Input your query')
     queryButton = st.sidebar.button("Get SQL code")
+
+    st.sidebar.markdown('----')
+
+    # downloadButton = st.sidebar.download_button("Download Responses")
 
     st.sidebar.markdown('----')
 
@@ -201,6 +257,9 @@ def tech(model, metatag_system_prompt, init_prompt):
         prompt += '\n' + query
         with st.expander('SQL code:'):
             st.write(generate_response(metatag_system_prompt, prompt, model))
+
+    # if downloadButton or st.session_state.content_generated:
+    #     with open('responses.txt', mode='w'):
 
 
 if __name__ == "__main__":

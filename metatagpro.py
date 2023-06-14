@@ -2,7 +2,7 @@ import openai
 import pandas as pd
 import os
 import streamlit as st
-
+import random
 from streamlit_chat import message
 
 openai.api_key = "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"
@@ -134,18 +134,24 @@ def business(folder, model, metatag_system_prompt, init_prompt):
                  'Data_Description': 'Give me only the data description section',
                  'Sensitive_Info': 'Which attributes contain personal sensitive information?'}
 
-    download_response = {}
+    storeResponsesBizUser = ""
+    qCountBizUser = 1
     if st.sidebar.button("Generate Contents") or st.session_state.content_generated:
         for q in questions:
             # conversation_history.append({"role": "user", "content": questions[q]})
             prompt = init_prompt + '\n' + questions[q]
             print(prompt)
             output = generate_response(metatag_system_prompt, prompt, model)
+            storeResponsesBizUser += f'Q{qCountBizUser}. ' + \
+                questions[q] + \
+                '\n\n' + output + '\n\n\n\n'
+            qCountBizUser += 1
             # conversation_history.append({"role": "assistant", "content": output})
             with st.expander(questions[q]):
                 st.write(output)
-                download_response[q] = output
                 # st.button("Export " + q + " to Data Marketplace")
+        st.sidebar.download_button(
+            "Download Responses", data=storeResponsesBizUser)
 
 
 def techUserTwo(model, metatag_system_prompt, init_prompt):
@@ -181,6 +187,8 @@ def techUserTwo(model, metatag_system_prompt, init_prompt):
 
     # for the above table -> the input to the 'get SQL code'
 
+    storeResponsesTechUserTwo = ""
+    qCountTechUserTwo = 1
     if st.sidebar.button("Generate Contents") or st.session_state.content_generated:
         for q in questions:
             prompt = "\n".join([message["content"]
@@ -190,10 +198,16 @@ def techUserTwo(model, metatag_system_prompt, init_prompt):
             print(prompt)
             output = generate_response(
                 metatag_system_prompt, prompt, model)
+            storeResponsesTechUserTwo += f'Q{qCountTechUserTwo}. ' + \
+                questions[q] + '\n\n' + output + '\n\n\n\n'
+            qCountTechUserTwo += 1
             with st.expander(questions[q]):
                 st.write(output)
                 if q in ['README', 'Code']:
                     st.button("Download " + q)
+
+        st.sidebar.download_button(
+            "Download Responses", data=storeResponsesTechUserTwo)
 
 
 def tech(model, metatag_system_prompt, init_prompt):
@@ -207,10 +221,6 @@ def tech(model, metatag_system_prompt, init_prompt):
 
     query = st.sidebar.text_input('Input your query')
     queryButton = st.sidebar.button("Get SQL code")
-
-    st.sidebar.markdown('----')
-
-    # downloadButton = st.sidebar.download_button("Download Responses")
 
     st.sidebar.markdown('----')
 
@@ -235,7 +245,8 @@ def tech(model, metatag_system_prompt, init_prompt):
                  'Data Model': 'Can you show the data model in tabular format if we create several SQL tables based on this data with primary key relationships in details'}
 
     # for the above table -> the input to the 'get SQL code'
-
+    storeResponses = ""
+    qCount = 1
     if st.sidebar.button("Generate Contents") or st.session_state.content_generated:
         for q in questions:
             prompt = "\n".join([message["content"]
@@ -245,6 +256,9 @@ def tech(model, metatag_system_prompt, init_prompt):
             print(prompt)
             output = generate_response(
                 metatag_system_prompt, prompt, model)
+            storeResponses += f'Q{qCount}. ' + \
+                questions[q] + '\n\n' + output + '\n\n\n\n'
+            qCount += 1
             with st.expander(questions[q]):
                 st.write(output)
                 if q in ['README', 'Code']:
@@ -258,8 +272,8 @@ def tech(model, metatag_system_prompt, init_prompt):
         with st.expander('SQL code:'):
             st.write(generate_response(metatag_system_prompt, prompt, model))
 
-    # if downloadButton or st.session_state.content_generated:
-    #     with open('responses.txt', mode='w'):
+        st.sidebar.download_button(
+            "Download Responses", data=storeResponses)
 
 
 if __name__ == "__main__":

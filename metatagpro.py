@@ -83,7 +83,9 @@ def main():
     model = st.sidebar.radio('Pick a model version',
                              ('gpt-3.5-turbo', 'gpt-4'))
     data_string = read_dataset(demo_folder)
-    init_prompt = generate_response(metatag_system_prompt, data_string, model)
+    dataStringNew = read_dataset(data_folder)
+    init_prompt = generate_response(
+        metatag_system_prompt, dataStringNew, model)
 
     if choice == "Home":
         home()
@@ -94,7 +96,8 @@ def main():
     elif choice == "Technical User Two":
         techUserTwo(model, metatag_system_prompt, init_prompt)
     elif choice == "Business User Two":
-        businessUserTwo(demo_folder, model, metatag_system_prompt, init_prompt)
+        businessUserTwo(demo_folder, model, metatag_system_prompt, generate_response(
+            metatag_system_prompt, data_string, model))
 
 
 def home():

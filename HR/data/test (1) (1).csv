@@ -1,0 +1,6 @@
+Employee_Name,VARCHAR
+EmpID,INTEGER
+MarriedID,INTEGER
+MaritalStatusID,INTEGER
+GenderID,INTEGER
+EmpStatusID,INTEGER

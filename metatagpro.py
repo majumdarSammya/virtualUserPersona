@@ -54,6 +54,7 @@ def get_text():
 
 def main():
     demo_folder = "HR/data"
+    data_folder = "HR/HRdata"
     metatag_system_prompt_previous = """Your name is MetaTag Pro. You are a data specialist, you need to perform the following tasks:
 - From a given dataset, you need to examine, understand, analyze the data
 - If there is an ETL code relating to the given dataset, you need to review and understand the code
@@ -74,7 +75,8 @@ def main():
     
     """
 
-    menu = ["Home", "Business User", "Technical User", "Technical User Two"]
+    menu = ["Home", "Business User", "Technical User",
+            "Technical User Two", "Business User Two"]
     choice = st.sidebar.selectbox("Select your role", menu)
     st.sidebar.markdown("----")
 
@@ -86,11 +88,13 @@ def main():
     if choice == "Home":
         home()
     elif choice == "Business User":
-        business(demo_folder, model, metatag_system_prompt, init_prompt)
+        business(data_folder, model, metatag_system_prompt, init_prompt)
     elif choice == "Technical User":
         tech(model, metatag_system_prompt, init_prompt)
     elif choice == "Technical User Two":
         techUserTwo(model, metatag_system_prompt, init_prompt)
+    elif choice == "Business User Two":
+        businessUserTwo(demo_folder, model, metatag_system_prompt, init_prompt)
 
 
 def home():
@@ -152,6 +156,58 @@ def business(folder, model, metatag_system_prompt, init_prompt):
                 # st.button("Export " + q + " to Data Marketplace")
         st.sidebar.download_button(
             "Download Responses", data=storeResponsesBizUser)
+
+
+# start
+
+def businessUserTwo(folder, model, metatag_system_prompt, init_prompt):
+    st.title("For Business User Two")
+
+    if "data_loaded" not in st.session_state:
+        st.session_state.data_loaded = False
+    if "content_generated" not in st.session_state:
+        st.session_state.content_generated = False
+
+    conversation_history = []
+    conversation_history.append({"role": "assistant", "content": init_prompt})
+
+    st.sidebar.markdown("----")
+    if st.sidebar.button("Load Dataset") or st.session_state.data_loaded:
+        for filename in os.listdir(folder):
+            if filename.endswith('.csv'):
+                file_path = os.path.join(folder, filename)
+                df = pd.read_csv(file_path)
+                non_null_rows = df.iloc[:5]
+                st.markdown(f"### Dataset sample: `{filename}`")
+                st.table(non_null_rows)
+        st.session_state.data_loaded = True
+
+    st.sidebar.markdown("----")
+
+    questions = {'Summary': 'Give me the summary of the data in one paragraph',
+                 'Use_Case': 'Give me the potential use cases of this data',
+                 'Data_Description': 'Give me only the data description section',
+                 'Sensitive_Info': 'Which attributes contain personal sensitive information?'}
+
+    storeResponsesBizUserTwo = ""
+    qCountBizUserTwo = 1
+    if st.sidebar.button("Generate Contents") or st.session_state.content_generated:
+        for q in questions:
+            # conversation_history.append({"role": "user", "content": questions[q]})
+            prompt = init_prompt + '\n' + questions[q]
+            print(prompt)
+            output = generate_response(metatag_system_prompt, prompt, model)
+            storeResponsesBizUserTwo += f'Q{qCountBizUserTwo}. ' + \
+                questions[q] + \
+                '\n\n' + output + '\n\n\n\n'
+            qCountBizUserTwo += 1
+            # conversation_history.append({"role": "assistant", "content": output})
+            with st.expander(questions[q]):
+                st.write(output)
+                # st.button("Export " + q + " to Data Marketplace")
+        st.sidebar.download_button(
+            "Download Responses", data=storeResponsesBizUserTwo)
+# # end
 
 
 def techUserTwo(model, metatag_system_prompt, init_prompt):

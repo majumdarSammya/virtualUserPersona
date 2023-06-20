@@ -2,7 +2,6 @@ import openai
 import pandas as pd
 import os
 import streamlit as st
-import random
 from streamlit_chat import message
 
 openai.api_key = "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"
@@ -110,6 +109,12 @@ def home():
 • For the technical user, the Data Assistant can provide SQL code based on plain english user input in proper code format from the data provided. \n
 • The Data Assistant can propose potential improvements in the structure/architecture of the data provided. \n
 """)
+
+    st.header("Security and Compliance")
+    st.markdown("This Data Modeller works by leveraging Azure OpenAI services and its APIs. For use cases that are sensitive and highly regulated in nature, we have compiled the important security highlights of Azure OpenAI:")
+    st.markdown(
+        "1. Data used to fine-tune models are stored in Azure Storage and are encrypted at rest. \n 2. User Prompts (including data uploaded from the UI) and its corresponding chat completions are stored in servers for 30 days, then deleted. \n 3. Access to this data are limited to Microsoft employees only in the case of Azure OpenAI service abuse by customer. \n 4. This 30 day data retention and Microsoft employee access can be removed by submitting a form to Microsoft defining the use-case. Once approved nothing will be retained in their servers. \n 5. Chat, completions, prompts are not used to train, test, retrain Azure OpenAI models \n 6. Currently, most of our prompts can produce good results from a well defined data dictionary, so redacting any further information from the data is being considered. \n")
+    st.markdown("[Source](https://learn.microsoft.com/en-us/legal/cognitive-services/openai/data-privacy?context=%2Fazure%2Fcognitive-services%2Fopenai%2Fcontext%2Fcontext)")
 
 
 def business(folder, model, metatag_system_prompt, init_prompt):

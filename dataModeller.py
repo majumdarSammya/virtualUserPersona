@@ -4,7 +4,7 @@ import os
 import streamlit as st
 from streamlit_chat import message
 
-openai.api_key = "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"
+openai.api_key = st.secrets["OPEN_AI_API_KEY"]
 
 
 @st.cache_data
@@ -101,8 +101,8 @@ def main():
 
 def home():
 
-    st.title("MetaTagPro - Data Assistant")
-    st.markdown("""MetaTagPro - Data Assistant is a powerful tool that drives data management efficiency, assists with data analysis, providing SQL code by leveraging cutting-edge LLMs. \n
+    st.title("Data Modeller")
+    st.markdown("""Data Modeller is a powerful tool that drives data management efficiency, assists with data analysis, providing SQL code by leveraging cutting-edge LLMs. \n
 • Easily understand existing datasets with structured, human-readable descriptions and automated metadata management. \n
 • Advanced capabilities include generating data product descriptions, creating data dictionaries and suggesting potential use cases and improvements, accelerating technical documentation creation. \n
 • Identify PII and sensitive information, providing an extra layer of governance to your data management processes. \n
@@ -305,6 +305,7 @@ def tech(model, metatag_system_prompt, init_prompt):
                  'Data_Description': 'Give me the data types of the data present inside the columns in proper format that can be used for database table in bullet points',
                  'Dependencies': 'Are there any dependencies present in the data?',
                  'Relationships': 'Can you find any relationship between the columns in this data',
+                 'Tabular Data': 'Can you show the column names, their datatypes in SQL format and a brief description in a nice tabular format',
                  'SQL table': 'create a SQL table based on the above data in proper code format, breaking it into several tables with primary keys.',
                  'Data Model': 'Can you show the data model in tabular format if we create several SQL tables based on this data with primary key relationships in details'}
 
@@ -317,7 +318,7 @@ def tech(model, metatag_system_prompt, init_prompt):
                                 for message in conversation_history])
             prompt += '\n' + questions[q]
 
-            print(prompt)
+            # print(prompt)
             output = generate_response(
                 metatag_system_prompt, prompt, model)
             storeResponses += f'Q{qCount}. ' + \

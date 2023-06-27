@@ -1,0 +1,7 @@
+EmpID,INTEGER
+PositionID,INTEGER
+FromDiversityJobFairID,INTEGER
+Salary,DECIMAL
+Termd,INTEGER
+PositionID,INTEGER
+Position,VARCHAR

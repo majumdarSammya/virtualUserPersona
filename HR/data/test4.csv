@@ -1,0 +1,8 @@
+EmpID,INTEGER
+DateofHire,DATE
+DateofTermination,DATE
+TermReason,VARCHAR
+EmploymentStatus,VARCHAR
+Department,VARCHAR
+ManagerName,VARCHAR
+ManagerID,INTEGER

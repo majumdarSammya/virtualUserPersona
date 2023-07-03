@@ -5,10 +5,12 @@ import streamlit as st
 from streamlit_chat import message
 
 
-openai.api_type = st.secrets['API_TYPE']
-openai.api_base = st.secrets['API_BASE']
-openai.api_version = st.secrets['API_VERSION']
-openai.api_key = st.secrets['API_KEY']
+# openai.api_type = st.secrets['API_TYPE']
+# openai.api_base = st.secrets['API_BASE']
+# openai.api_version = st.secrets['API_VERSION']
+# openai.api_key = st.secrets['API_KEY']
+
+openai.api_key = st.secrets["API_KEY"]
 
 
 @st.cache_data
@@ -21,8 +23,8 @@ def generate_response(system_prompt, user_prompt, model):
         ],
         model=model,
         max_tokens=2048,
-        temperature=0.3,
-        engine='demo3'
+        temperature=0.3
+        # engine='demo3'
     )
 
     return response['choices'][0]['message']['content'].strip()

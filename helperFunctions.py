@@ -270,3 +270,54 @@ def tech(model, metatag_system_prompt, init_prompt):
 
         st.sidebar.download_button(
             "Download Responses", data=storeResponses)
+
+
+def customUser(model):
+    if "content_generated" not in st.session_state:
+        st.session_state.content_generated = False
+
+    conversation_history = []
+
+    st.title("For Custom User")
+    st.sidebar.markdown("----")
+
+    # downloadButton = st.sidebar.download_button("Download Responses")
+    bytes_data = None
+    uploaded_files = st.file_uploader(
+        "Upload SQL script", accept_multiple_files=True)
+    for file in uploaded_files:
+        bytes_data = file.read()
+        # st.write("filename:", file.name)
+
+    st.sidebar.markdown("----")
+
+    question = st.text_area(
+        label="Enter question or SQL script", key="question", height=100)
+    submit = st.button(label='Submit')
+
+    if uploaded_files is not None:
+        custom_user_prompt = f"""You are a data assistant. Your task is to do the following: 
+                                - You are given two SQL tables created with the following SQL code:
+                                        {bytes_data}
+                                - Examine the SQL code provided to you: {question}
+                                - The provided SQL code makes a query to the first table. You should respond with an equivalent SQL code that does the exact same thing from the second table.
+                                - Ask to clarify if you did not understand the question
+                                  """
+    else:
+        pass
+    conversation_history.append(
+        {"role": "assistant", "content": custom_user_prompt})
+    questions = {
+        "user_question": question
+    }
+    if submit or st.session_state.content_generated:
+        for q in questions:
+            prompt = "\n".join([message["content"]
+                                for message in conversation_history])
+            prompt += '\n' + questions[q]
+
+            print(prompt)
+            output = generate_response(
+                custom_user_prompt, prompt, model)
+            with st.expander("SQL code:"):
+                st.write(output)

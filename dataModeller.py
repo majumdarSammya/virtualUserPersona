@@ -1,9 +1,7 @@
-import openai
 import pandas as pd
-import os
 import streamlit as st
 from streamlit_chat import message
-from helperFunctions import business, generate_response, businessUserTwo, read_dataset, techUserTwo, tech, get_text
+from helperFunctions import business, generate_response, businessUserTwo, read_dataset, techUserTwo, tech, get_text, customUser
 
 # openai.api_type = st.secrets['API_TYPE']
 # openai.api_base = st.secrets['API_BASE']
@@ -14,12 +12,6 @@ from helperFunctions import business, generate_response, businessUserTwo, read_d
 def main():
     demo_folder = "HR/data"
     data_folder = "HR/HRdata"
-    metatag_system_prompt_previous = """Your name is MetaTag Pro. You are a data specialist, you need to perform the following tasks:
-- From a given dataset, you need to examine, understand, analyze the data
-- If there is an ETL code relating to the given dataset, you need to review and understand the code
-- You then need to create a summary description of their data product which can be published on the data product marketplace to help consumers understand the data product. 
-- You should suggest potential use cases of the input dataset
-- Finally you need to reorgnise the output as README.md format with the first section as Summary, second section as potential use cases, third section as data description. In the third section,  for each attribute, it should be associated with data type and a detailed description structured as a table"""
 
     metatag_system_prompt = """ 
     
@@ -35,7 +27,7 @@ def main():
     """
 
     menu = ["Home", "Business User", "Technical User",
-            "Technical User Two", "Business User Two"]
+            "Technical User Two", "Business User Two", "Custom User"]
     choice = st.sidebar.selectbox("Select your role", menu)
     st.sidebar.markdown("----")
 
@@ -57,6 +49,8 @@ def main():
     elif choice == "Business User Two":
         businessUserTwo(demo_folder, model, metatag_system_prompt, generate_response(
             metatag_system_prompt, data_string, model))
+    elif choice == "Custom User":
+        customUser(model)
 
 
 def home():

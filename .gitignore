@@ -2,3 +2,5 @@ HR/.streamlit/secrets.toml
 .streamlit/secrets.toml
 dataModeller.py
 Baltimore CyberTrust Root.crt
+.streamlit/secrets.toml
+helperFunctions.py

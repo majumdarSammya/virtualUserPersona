@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
 from streamlit_chat import message
-from helperFunctions import business, generate_response, businessUserTwo, read_dataset, techUserTwo, tech, get_text, customUser
+from helperFunctions import business, generate_response, read_dataset,  tech, get_text, customUser
 
 # openai.api_type = st.secrets['API_TYPE']
 # openai.api_base = st.secrets['API_BASE']
@@ -26,8 +26,8 @@ def main():
     
     """
 
-    menu = ["Home", "Business User", "Technical User",
-            "Technical User Two", "Business User Two", "Custom User"]
+    menu = ["Home", "Business View", "Technical View",
+            "SQL Converter"]
     choice = st.sidebar.selectbox("Select your role", menu)
     st.sidebar.markdown("----")
 
@@ -40,16 +40,11 @@ def main():
 
     if choice == "Home":
         home()
-    elif choice == "Business User":
+    elif choice == "Business View":
         business(data_folder, model, metatag_system_prompt, init_prompt)
-    elif choice == "Technical User":
+    elif choice == "Technical View":
         tech(model, metatag_system_prompt, init_prompt)
-    elif choice == "Technical User Two":
-        techUserTwo(model, metatag_system_prompt, init_prompt)
-    elif choice == "Business User Two":
-        businessUserTwo(demo_folder, model, metatag_system_prompt, generate_response(
-            metatag_system_prompt, data_string, model))
-    elif choice == "Custom User":
+    elif choice == "SQL Converter":
         customUser(model)
 
 

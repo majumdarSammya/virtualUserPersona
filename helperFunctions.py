@@ -23,19 +23,87 @@ def generate_response(system_prompt, user_prompt, model):
     return response['choices'][0]['message']['content'].strip()
 
 
+# def business(folder, model, metatag_system_prompt, init_prompt):
+#     st.title("For Business User")
+
+#     if "data_loaded" not in st.session_state:
+#         st.session_state.data_loaded = False
+#     if "content_generated" not in st.session_state:
+#         st.session_state.content_generated = False
+
+
+#     conversation_history = []
+#     conversation_history.append({"role": "assistant", "content": init_prompt})
+#     df = pd.DataFrame()
+#     st.sidebar.markdown("----")
+#     if st.sidebar.button("Load Dataset") or st.session_state.data_loaded:
+#         for filename in os.listdir(folder):
+#             if filename.endswith('.csv'):
+#                 file_path = os.path.join(folder, filename)
+#                 df = pd.read_csv(file_path)
+#                 non_null_rows = df.iloc[:5]
+#                 st.markdown(f"### Dataset sample: `{filename}`")
+#                 st.table(non_null_rows)
+#         st.session_state.data_loaded = True
+
+#     st.sidebar.markdown("----")
+#     folder = str(Path.cwd()) + str(Path("/HR/TableScripts"))
+#     file_name = next((filename for filename in os.listdir(folder) if filename.endswith('.txt')), None)
+
+#     if file_name:
+#         file_path = os.path.join(folder, file_name)
+
+#         # Read the text file and store its contents as a string
+#         with open(file_path, 'r') as file:
+#             text = file.read()
+#     query = st.text_input('Input your query')
+#     queryButton = st.button("Get SQL code")
+#     prompt =   query + f"""\n
+#     - only provide a query for the first table.
+#     - only provide the SQL code for the query. \n
+#     Here is the table: \n
+#     {text}
+#     """
+#     if queryButton or st.session_state.content_generated:
+#          st.code(generate_response(metatag_system_prompt, prompt, model), language="sql")
+
+
+#     questions = {'Summary': 'Give me the summary of the data in one paragraph',
+#                  'Use_Case': 'Give me the potential use cases of this data',
+#                  'Data_Description': 'Give me only the data description section',
+#                  'Sensitive_Info': 'Which attributes contain personal sensitive information?'}
+
+#     storeResponsesBizUser = ""
+#     qCountBizUser = 1
+#     if st.sidebar.button("Generate Contents") or st.session_state.content_generated:
+#         for q in questions:
+#             # conversation_history.append({"role": "user", "content": questions[q]})
+#             prompt = init_prompt + '\n' + questions[q]
+#             print(prompt)
+#             output = generate_response(metatag_system_prompt, prompt, model)
+#             storeResponsesBizUser += f'Q{qCountBizUser}. ' + \
+#                 questions[q] + \
+#                 '\n\n' + output + '\n\n\n\n'
+#             qCountBizUser += 1
+#             # conversation_history.append({"role": "assistant", "content": output})
+#             with st.expander(questions[q]):
+#                 st.write(output)
+#                 # st.button("Export " + q + " to Data Marketplace")
+#         st.sidebar.download_button(
+#             "Download Responses", data=storeResponsesBizUser)
+
 
 def business(folder, model, metatag_system_prompt, init_prompt):
-    st.title("For Business User")
+    st.title("Business View")
 
     if "data_loaded" not in st.session_state:
         st.session_state.data_loaded = False
     if "content_generated" not in st.session_state:
         st.session_state.content_generated = False
 
-    
     conversation_history = []
     conversation_history.append({"role": "assistant", "content": init_prompt})
-    df = pd.DataFrame() 
+
     st.sidebar.markdown("----")
     if st.sidebar.button("Load Dataset") or st.session_state.data_loaded:
         for filename in os.listdir(folder):
@@ -48,30 +116,11 @@ def business(folder, model, metatag_system_prompt, init_prompt):
         st.session_state.data_loaded = True
 
     st.sidebar.markdown("----")
-    folder = str(Path.cwd()) + str(Path("/HR/TableScripts"))
-    file_name = next((filename for filename in os.listdir(folder) if filename.endswith('.txt')), None)
-
-    if file_name:
-        file_path = os.path.join(folder, file_name)
-
-        # Read the text file and store its contents as a string
-        with open(file_path, 'r') as file:
-            text = file.read()
-    query = st.text_input('Input your query')
-    queryButton = st.button("Get SQL code")
-    prompt =   query + f"""\n 
-    - only provide a query for the first table.
-    - only provide the SQL code for the query. \n
-    Here is the table: \n
-    {text}
-    """ 
-    if queryButton or st.session_state.content_generated:
-         st.code(generate_response(metatag_system_prompt, prompt, model), language="sql")
-
 
     questions = {'Summary': 'Give me the summary of the data in one paragraph',
                  'Use_Case': 'Give me the potential use cases of this data',
                  'Data_Description': 'Give me only the data description section',
+                 'Tabular Data': 'Can you show the column names, their datatypes in SQL format, brief description and PII in a nice tabular format',  # DATA CATALOGUE
                  'Sensitive_Info': 'Which attributes contain personal sensitive information?'}
 
     storeResponsesBizUser = ""
@@ -93,105 +142,55 @@ def business(folder, model, metatag_system_prompt, init_prompt):
         st.sidebar.download_button(
             "Download Responses", data=storeResponsesBizUser)
 
+# REDACTED BUSINESS USER TWO
 
+# def businessUserTwo(folder, model, metatag_system_prompt, init_prompt):
+#     st.title("For Business User Two")
 
-"""
-def business(folder, model, metatag_system_prompt, init_prompt):
-    st.title("For Business User")
+#     if "data_loaded" not in st.session_state:
+#         st.session_state.data_loaded = False
+#     if "content_generated" not in st.session_state:
+#         st.session_state.content_generated = False
 
-    if "data_loaded" not in st.session_state:
-        st.session_state.data_loaded = False
-    if "content_generated" not in st.session_state:
-        st.session_state.content_generated = False
+#     conversation_history = []
+#     conversation_history.append({"role": "assistant", "content": init_prompt})
 
-    conversation_history = []
-    conversation_history.append({"role": "assistant", "content": init_prompt})
+#     st.sidebar.markdown("----")
+#     if st.sidebar.button("Load Dataset") or st.session_state.data_loaded:
+#         for filename in os.listdir(folder):
+#             if filename.endswith('.csv'):
+#                 file_path = os.path.join(folder, filename)
+#                 df = pd.read_csv(file_path)
+#                 non_null_rows = df.iloc[:5]
+#                 st.markdown(f"### Dataset sample: `{filename}`")
+#                 st.table(non_null_rows)
+#         st.session_state.data_loaded = True
 
-    st.sidebar.markdown("----")
-    if st.sidebar.button("Load Dataset") or st.session_state.data_loaded:
-        for filename in os.listdir(folder):
-            if filename.endswith('.csv'):
-                file_path = os.path.join(folder, filename)
-                df = pd.read_csv(file_path)
-                non_null_rows = df.iloc[:5]
-                st.markdown(f"### Dataset sample: `{filename}`")
-                st.table(non_null_rows)
-        st.session_state.data_loaded = True
+#     st.sidebar.markdown("----")
 
-    st.sidebar.markdown("----")
+#     questions = {'Summary': 'Give me the summary of the data in one paragraph',
+#                  'Use_Case': 'Give me the potential use cases of this data',
+#                  'Data_Description': 'Give me only the data description section',
+#                  'Sensitive_Info': 'Which attributes contain personal sensitive information?'}
 
-    questions = {'Summary': 'Give me the summary of the data in one paragraph',
-                 'Use_Case': 'Give me the potential use cases of this data',
-                 'Data_Description': 'Give me only the data description section',
-                 'Sensitive_Info': 'Which attributes contain personal sensitive information?'}
-
-    storeResponsesBizUser = ""
-    qCountBizUser = 1
-    if st.sidebar.button("Generate Contents") or st.session_state.content_generated:
-        for q in questions:
-            # conversation_history.append({"role": "user", "content": questions[q]})
-            prompt = init_prompt + '\n' + questions[q]
-            print(prompt)
-            output = generate_response(metatag_system_prompt, prompt, model)
-            storeResponsesBizUser += f'Q{qCountBizUser}. ' + \
-                questions[q] + \
-                '\n\n' + output + '\n\n\n\n'
-            qCountBizUser += 1
-            # conversation_history.append({"role": "assistant", "content": output})
-            with st.expander(questions[q]):
-                st.write(output)
-                # st.button("Export " + q + " to Data Marketplace")
-        st.sidebar.download_button(
-            "Download Responses", data=storeResponsesBizUser)
-"""
-
-def businessUserTwo(folder, model, metatag_system_prompt, init_prompt):
-    st.title("For Business User Two")
-
-    if "data_loaded" not in st.session_state:
-        st.session_state.data_loaded = False
-    if "content_generated" not in st.session_state:
-        st.session_state.content_generated = False
-
-    conversation_history = []
-    conversation_history.append({"role": "assistant", "content": init_prompt})
-
-    st.sidebar.markdown("----")
-    if st.sidebar.button("Load Dataset") or st.session_state.data_loaded:
-        for filename in os.listdir(folder):
-            if filename.endswith('.csv'):
-                file_path = os.path.join(folder, filename)
-                df = pd.read_csv(file_path)
-                non_null_rows = df.iloc[:5]
-                st.markdown(f"### Dataset sample: `{filename}`")
-                st.table(non_null_rows)
-        st.session_state.data_loaded = True
-
-    st.sidebar.markdown("----")
-
-    questions = {'Summary': 'Give me the summary of the data in one paragraph',
-                 'Use_Case': 'Give me the potential use cases of this data',
-                 'Data_Description': 'Give me only the data description section',
-                 'Sensitive_Info': 'Which attributes contain personal sensitive information?'}
-
-    storeResponsesBizUserTwo = ""
-    qCountBizUserTwo = 1
-    if st.sidebar.button("Generate Contents") or st.session_state.content_generated:
-        for q in questions:
-            # conversation_history.append({"role": "user", "content": questions[q]})
-            prompt = init_prompt + '\n' + questions[q]
-            print(prompt)
-            output = generate_response(metatag_system_prompt, prompt, model)
-            storeResponsesBizUserTwo += f'Q{qCountBizUserTwo}. ' + \
-                questions[q] + \
-                '\n\n' + output + '\n\n\n\n'
-            qCountBizUserTwo += 1
-            # conversation_history.append({"role": "assistant", "content": output})
-            with st.expander(questions[q]):
-                st.write(output)
-                # st.button("Export " + q + " to Data Marketplace")
-        st.sidebar.download_button(
-            "Download Responses", data=storeResponsesBizUserTwo)
+#     storeResponsesBizUserTwo = ""
+#     qCountBizUserTwo = 1
+#     if st.sidebar.button("Generate Contents") or st.session_state.content_generated:
+#         for q in questions:
+#             # conversation_history.append({"role": "user", "content": questions[q]})
+#             prompt = init_prompt + '\n' + questions[q]
+#             print(prompt)
+#             output = generate_response(metatag_system_prompt, prompt, model)
+#             storeResponsesBizUserTwo += f'Q{qCountBizUserTwo}. ' + \
+#                 questions[q] + \
+#                 '\n\n' + output + '\n\n\n\n'
+#             qCountBizUserTwo += 1
+#             # conversation_history.append({"role": "assistant", "content": output})
+#             with st.expander(questions[q]):
+#                 st.write(output)
+#                 # st.button("Export " + q + " to Data Marketplace")
+#         st.sidebar.download_button(
+#             "Download Responses", data=storeResponsesBizUserTwo)
 
 
 def get_text():
@@ -221,61 +220,62 @@ def read_dataset(folder_path):
 
     return data_string
 
+# REDACTED TECHNICAL USER TWO
 
-def techUserTwo(model, metatag_system_prompt, init_prompt):
-    if "content_generated" not in st.session_state:
-        st.session_state.content_generated = False
+# def techUserTwo(model, metatag_system_prompt, init_prompt):
+#     if "content_generated" not in st.session_state:
+#         st.session_state.content_generated = False
 
-    conversation_history = []
-    # conversation_history.append({"role": "assistant", "content": init_prompt})
-    st.title("For Technical User Two")
-    st.sidebar.markdown("----")
+#     conversation_history = []
+#     # conversation_history.append({"role": "assistant", "content": init_prompt})
+#     st.title("For Technical User Two")
+#     st.sidebar.markdown("----")
 
-    st.sidebar.markdown('----')
+#     st.sidebar.markdown('----')
 
-    # downloadButton = st.sidebar.download_button("Download Responses")
+#     # downloadButton = st.sidebar.download_button("Download Responses")
 
-    # st.sidebar.markdown('----')
+#     # st.sidebar.markdown('----')
 
-    uploaded_files = st.sidebar.file_uploader(
-        "Select the source code to interpret", accept_multiple_files=True)
+#     uploaded_files = st.sidebar.file_uploader(
+#         "Select the source code to interpret", accept_multiple_files=True)
 
-    for uploaded_file in uploaded_files:
-        code_txt = uploaded_file.getvalue()
-        content = str(uploaded_file.name) + " " + str(code_txt)
-        conversation_history.append({"role": "user", "content": content})
-        st.write("filename:", uploaded_file.name)
-        st.code(code_txt.decode("utf-8"), language='python')
+#     for uploaded_file in uploaded_files:
+#         code_txt = uploaded_file.getvalue()
+#         content = str(uploaded_file.name) + " " + str(code_txt)
+#         conversation_history.append({"role": "user", "content": content})
+#         st.write("filename:", uploaded_file.name)
+#         st.code(code_txt.decode("utf-8"), language='python')
 
-    st.sidebar.markdown("----")
+#     st.sidebar.markdown("----")
 
-    questions = {'Summary': 'give me a brief one paragraph summary of the uploaded data',
-                 'SQL table': 'create a SQL table based on the above data in proper code format, breaking it into several tables with primary keys and foreign keys if necessary.',
-                 'Data Model': 'Can you show the data model in tabular format if we create several SQL tables based on the above data dictionary with primary key relationships in details'}
+#     questions = {'Summary': 'give me a brief one paragraph summary of the uploaded data',
+#                  'SQL table': 'create a SQL table based on the above data in proper code format, breaking it into several tables with primary keys and foreign keys if necessary.',
+#                  'Data Model': 'Can you show the data model in tabular format if we create several SQL tables based on the above data dictionary with primary key relationships in details'}
 
-    # for the above table -> the input to the 'get SQL code'
+#     # for the above table -> the input to the 'get SQL code'
 
-    storeResponsesTechUserTwo = ""
-    qCountTechUserTwo = 1
-    if st.sidebar.button("Generate Contents") or st.session_state.content_generated:
-        for q in questions:
-            prompt = "\n".join([message["content"]
-                                for message in conversation_history])
-            prompt += '\n' + questions[q]
+#     storeResponsesTechUserTwo = ""
+#     qCountTechUserTwo = 1
+#     if st.sidebar.button("Generate Contents") or st.session_state.content_generated:
+#         for q in questions:
+#             prompt = "\n".join([message["content"]
+#                                 for message in conversation_history])
+#             prompt += '\n' + questions[q]
 
-            print(prompt)
-            output = generate_response(
-                metatag_system_prompt, prompt, model)
-            storeResponsesTechUserTwo += f'Q{qCountTechUserTwo}. ' + \
-                questions[q] + '\n\n' + output + '\n\n\n\n'
-            qCountTechUserTwo += 1
-            with st.expander(questions[q]):
-                st.write(output)
-                if q in ['README', 'Code']:
-                    st.button("Download " + q)
+#             print(prompt)
+#             output = generate_response(
+#                 metatag_system_prompt, prompt, model)
+#             storeResponsesTechUserTwo += f'Q{qCountTechUserTwo}. ' + \
+#                 questions[q] + '\n\n' + output + '\n\n\n\n'
+#             qCountTechUserTwo += 1
+#             with st.expander(questions[q]):
+#                 st.write(output)
+#                 if q in ['README', 'Code']:
+#                     st.button("Download " + q)
 
-        st.sidebar.download_button(
-            "Download Responses", data=storeResponsesTechUserTwo)
+#         st.sidebar.download_button(
+#             "Download Responses", data=storeResponsesTechUserTwo)
 
 
 def tech(model, metatag_system_prompt, init_prompt):
@@ -284,7 +284,7 @@ def tech(model, metatag_system_prompt, init_prompt):
 
     conversation_history = []
     # conversation_history.append({"role": "assistant", "content": init_prompt})
-    st.title("For Technical User")
+    st.title("Technical View")
     st.sidebar.markdown("----")
 
     query = st.sidebar.text_input('Input your query')
@@ -304,14 +304,18 @@ def tech(model, metatag_system_prompt, init_prompt):
 
     st.sidebar.markdown("----")
 
-    questions = {'Summary': 'Can you give me a brief one paragraph summary of the data',
-                 'Structure': 'How is the data file structured',
-                 'Data_Description': 'Give me the data types of the data present inside the columns in proper format that can be used for database table in bullet points',
-                 'Dependencies': 'Are there any dependencies present in the data?',
-                 'Relationships': 'Can you find any relationship between the columns in this data',
-                 'Tabular Data': 'Can you show the column names, their datatypes in SQL format and a brief description in a nice tabular format',
-                 'SQL table': 'create a SQL table based on the above data in proper code format, breaking it into several tables with primary keys.',
-                 'Data Model': 'Can you show the data model in tabular format if we create several SQL tables based on this data with primary key relationships in details'}
+    # Predefined question set
+    questions = {
+
+        'Summary': 'Can you give me a brief one paragraph summary of the data',
+        'Structure': 'How is the data file structured',
+        'Data_Description': 'Give me the data types of the data present inside the columns in proper format that can be used for database table in bullet points',
+        'Dependencies': 'Are there any dependencies present in the data?',
+        'Relationships': 'Can you find any relationship between the columns in this data',
+        'SQL table': 'create a SQL table based on the above data in proper code format, breaking it into several tables with primary keys.',
+        'Data Model': 'Can you show the data model in tabular format if we create several SQL tables based on this data with primary key relationships in details'
+
+    }
 
     # for the above table -> the input to the 'get SQL code'
     storeResponses = ""
@@ -351,21 +355,17 @@ def customUser(model):
 
     conversation_history = []
 
-    st.title("For Custom User")
-    st.sidebar.markdown("----")
-
+    st.title("SQL Code Converter")
     # downloadButton = st.sidebar.download_button("Download Responses")
     bytes_data = None
     uploaded_files = st.file_uploader(
-        "Upload SQL script", accept_multiple_files=True)
+        "Upload database tables", accept_multiple_files=True)
     for file in uploaded_files:
         bytes_data = file.read()
         # st.write("filename:", file.name)
 
-    st.sidebar.markdown("----")
-
     question = st.text_area(
-        label="Enter question or SQL script", key="question", height=100)
+        label="Enter SQL script", key="question", height=100)
     submit = st.button(label='Submit')
 
     if uploaded_files is not None:

@@ -320,4 +320,4 @@ def customUser(model):
             output = generate_response(
                 custom_user_prompt, prompt, model)
             with st.expander("SQL code:"):
-                st.write(output)
+                st.code(output, language='sql')

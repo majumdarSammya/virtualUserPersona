@@ -1,0 +1,17 @@
+Table Name: financial_data
+
+Columns:
+
+- id: INT (Primary Key) 
+
+- transaction_date: DATE 
+
+- account_number: VARCHAR(10) 
+
+- transaction_type: VARCHAR(50) 
+
+- amount: DECIMAL(10, 2)
+
+- currency: VARCHAR(3) 
+
+- description: VARCHAR(255)

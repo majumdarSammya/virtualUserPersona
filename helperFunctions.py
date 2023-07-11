@@ -93,54 +93,56 @@ def generate_response(system_prompt, user_prompt, model):
 #             "Download Responses", data=storeResponsesBizUser)
 
 
-def business(folder, model, metatag_system_prompt, init_prompt):
-    st.title("Business View")
+# def business(folder, model, metatag_system_prompt, init_prompt):
+#     st.title("Business View")
 
-    if "data_loaded" not in st.session_state:
-        st.session_state.data_loaded = False
-    if "content_generated" not in st.session_state:
-        st.session_state.content_generated = False
+#     if "data_loaded" not in st.session_state:
+#         st.session_state.data_loaded = False
+#     if "content_generated" not in st.session_state:
+#         st.session_state.content_generated = False
 
-    conversation_history = []
-    conversation_history.append({"role": "assistant", "content": init_prompt})
+#     conversation_history = []
+#     conversation_history.append({"role": "assistant", "content": init_prompt})
 
-    st.sidebar.markdown("----")
-    if st.sidebar.button("Load Dataset") or st.session_state.data_loaded:
-        for filename in os.listdir(folder):
-            if filename.endswith('.csv'):
-                file_path = os.path.join(folder, filename)
-                df = pd.read_csv(file_path)
-                non_null_rows = df.iloc[:5]
-                st.markdown(f"### Dataset sample: `{filename}`")
-                st.table(non_null_rows)
-        st.session_state.data_loaded = True
+#     st.sidebar.markdown("----")
+#     if st.sidebar.button("Load Dataset") or st.session_state.data_loaded:
+#         for filename in os.listdir(folder):
+#             if filename.endswith('.csv'):
+#                 file_path = os.path.join(folder, filename)
+#                 df = pd.read_csv(file_path)
+#                 non_null_rows = df
+#                 st.markdown(f"### Dataset sample: `{filename}`")
+#                 st.table(non_null_rows)
+#         st.session_state.data_loaded = True
 
-    st.sidebar.markdown("----")
+#     st.sidebar.markdown("----")
 
-    questions = {'Summary': 'Give me the summary of the data in one paragraph',
-                 'Use_Case': 'Give me the potential use cases of this data',
-                 'Data_Description': 'Give me only the data description section',
-                 'Tabular Data': 'Can you show the column names, their datatypes in SQL format, brief description and PII in a nice tabular format',  # DATA CATALOGUE
-                 'Sensitive_Info': 'Which attributes contain personal sensitive information?'}
+#     questions = {
 
-    storeResponsesBizUser = ""
-    qCountBizUser = 1
-    if st.sidebar.button("Generate Contents") or st.session_state.content_generated:
-        for q in questions:
-            # conversation_history.append({"role": "user", "content": questions[q]})
-            prompt = init_prompt + '\n' + questions[q]
-            print(prompt)
-            output = generate_response(metatag_system_prompt, prompt, model)
-            storeResponsesBizUser += f'Q{qCountBizUser}. ' + \
-                questions[q] + \
-                '\n\n' + output + '\n\n\n\n'
-            qCountBizUser += 1
-            # conversation_history.append({"role": "assistant", "content": output})
-            with st.expander(questions[q]):
-                st.write(output)
-                # st.button("Export " + q + " to Data Marketplace")
-        st.sidebar.download_button(
-            "Download Responses", data=storeResponsesBizUser)
+#         'Summary': 'Give me the summary of the data in one paragraph',
+#         'Use_Case': 'Give me the potential use cases of this data',
+#         'Tabular Data': 'Can you show all the column names, their datatypes in SQL format, brief description and PII in a nice tabular format',  # DATA CATALOGUE
+
+#     }
+
+#     storeResponsesBizUser = ""
+#     qCountBizUser = 1
+#     if st.sidebar.button("Generate Contents") or st.session_state.content_generated:
+#         for q in questions:
+#             # conversation_history.append({"role": "user", "content": questions[q]})
+#             prompt = init_prompt + '\n' + questions[q]
+#             print(prompt)
+#             output = generate_response(metatag_system_prompt, prompt, model)
+#             storeResponsesBizUser += f'Q{qCountBizUser}. ' + \
+#                 questions[q] + \
+#                 '\n\n' + output + '\n\n\n\n'
+#             qCountBizUser += 1
+#             # conversation_history.append({"role": "assistant", "content": output})
+#             with st.expander(questions[q]):
+#                 st.write(output)
+#                 # st.button("Export " + q + " to Data Marketplace")
+#         st.sidebar.download_button(
+#             "Download Responses", data=storeResponsesBizUser)
 
 # REDACTED BUSINESS USER TWO
 
@@ -278,6 +280,59 @@ def read_dataset(folder_path):
 #             "Download Responses", data=storeResponsesTechUserTwo)
 
 
+def business(model, metatag_system_prompt, init_prompt):
+    if "content_generated" not in st.session_state:
+        st.session_state.content_generated = False
+
+    conversation_history = []
+    # conversation_history.append({"role": "assistant", "content": init_prompt})
+    st.title("Business View")
+    st.sidebar.markdown("----")
+
+    uploaded_files = st.sidebar.file_uploader(
+        "Select the source code to interpret", accept_multiple_files=True)
+
+    for uploaded_file in uploaded_files:
+        code_txt = uploaded_file.getvalue()
+        content = str(uploaded_file.name) + " " + str(code_txt)
+        conversation_history.append({"role": "user", "content": content})
+        st.write("filename:", uploaded_file.name)
+        st.code(code_txt.decode("utf-8"), language='python')
+
+    st.sidebar.markdown("----")
+
+    # Predefined question set
+    questions = {
+
+        'Summary': 'Give me the summary of the data in one paragraph',
+        'Use_Case': 'Give me the potential use cases of this data',
+        'Tabular Data': 'Can you show all the column names, their datatypes in SQL format, brief description and PII in a nice tabular format',  # DATA CATALOGUE
+
+    }
+
+    # for the above table -> the input to the 'get SQL code'
+    storeResponses = ""
+    qCount = 1
+    if st.sidebar.button("Generate Contents") or st.session_state.content_generated:
+        for q in questions:
+            prompt = "\n".join([message["content"]
+                                for message in conversation_history])
+            prompt += '\n' + questions[q]
+
+            # print(prompt)
+            output = generate_response(
+                metatag_system_prompt, prompt, model)
+            storeResponses += f'Q{qCount}. ' + \
+                questions[q] + '\n\n' + output + '\n\n\n\n'
+            qCount += 1
+            with st.expander(questions[q]):
+                st.write(output)
+                if q in ['README', 'Code']:
+                    st.button("Download " + q)
+            st.sidebar.download_button(
+                "Download Responses", data=storeResponses)
+
+
 def tech(model, metatag_system_prompt, init_prompt):
     if "content_generated" not in st.session_state:
         st.session_state.content_generated = False
@@ -307,14 +362,11 @@ def tech(model, metatag_system_prompt, init_prompt):
     # Predefined question set
     questions = {
 
-        'Summary': 'Can you give me a brief one paragraph summary of the data',
-        'Structure': 'How is the data file structured',
-        'Data_Description': 'Give me the data types of the data present inside the columns in proper format that can be used for database table in bullet points',
-        'Dependencies': 'Are there any dependencies present in the data?',
-        'Relationships': 'Can you find any relationship between the columns in this data',
-        'SQL table': 'create a SQL table based on the above data in proper code format, breaking it into several tables with primary keys.',
-        'Data Model': 'Can you show the data model in tabular format if we create several SQL tables based on this data with primary key relationships in details'
 
+        'SQL table': 'create a SQL table based on the above data in proper code format, breaking it into several tables with primary keys.',
+        'SQL code': 'Provide the SQL code to create tables with the columns in the ACTUAL_COLUMN column in the data splitting the tables with assumed primary and foreign keys',
+        # 'Data Model': 'Can you show the data model in tabular format if we create several SQL tables based on this data with primary key relationships in details',
+        'Tabular Data': 'Can you show all the column names, their datatypes in SQL format, brief description and PII in a nice tabular format'
     }
 
     # for the above table -> the input to the 'get SQL code'
@@ -336,6 +388,8 @@ def tech(model, metatag_system_prompt, init_prompt):
                 st.write(output)
                 if q in ['README', 'Code']:
                     st.button("Download " + q)
+        st.sidebar.download_button(
+            "Download Responses", data=storeResponses)
 
     if queryButton or st.session_state.content_generated:
 

@@ -10,7 +10,6 @@ from helperFunctions import business, generate_response, read_dataset,  tech, ge
 
 
 def main():
-    demo_folder = "HR/data"
     data_folder = "HR/HRdata"
 
     metatag_system_prompt = """ 
@@ -33,7 +32,7 @@ def main():
 
     model = st.sidebar.radio('Pick a model version',
                              ('gpt-3.5-turbo', 'gpt-4'))
-    data_string = read_dataset(demo_folder)
+    # data_string = read_dataset(demo_folder)
     dataStringNew = read_dataset(data_folder)
     init_prompt = generate_response(
         metatag_system_prompt, dataStringNew, model)
@@ -41,7 +40,7 @@ def main():
     if choice == "Home":
         home()
     elif choice == "Business View":
-        business(data_folder, model, metatag_system_prompt, init_prompt)
+        business(model, metatag_system_prompt, init_prompt)
     elif choice == "Technical View":
         tech(model, metatag_system_prompt, init_prompt)
     elif choice == "SQL Converter":

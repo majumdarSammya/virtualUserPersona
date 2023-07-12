@@ -296,17 +296,20 @@ def business(model, metatag_system_prompt, init_prompt):
         code_txt = uploaded_file.getvalue()
         content = str(uploaded_file.name) + " " + str(code_txt)
         conversation_history.append({"role": "user", "content": content})
+        dataframe = pd.read_csv(uploaded_file)
         st.write("filename:", uploaded_file.name)
-        st.code(code_txt.decode("utf-8"), language='python')
+        st.table(dataframe)
+        # st.code(code_txt.decode("utf-8"), language='python')
 
     st.sidebar.markdown("----")
 
     # Predefined question set
     questions = {
 
-        'Summary': 'Give me the summary of the data in one paragraph',
-        'Use_Case': 'Give me the potential use cases of this data',
-        'Tabular Data': 'Can you show all the column names, their datatypes in SQL format, brief description and PII in a nice tabular format',  # DATA CATALOGUE
+        'Summary': 'Give me a brief summary of the data in bullet points without mentioning the column names',
+        'Use_Case': 'Give me the potential use cases of this data?',
+        "Relationships": 'Are there any relationships among the values inside ACTUAL_COLUMN in the data?',
+        'Tabular Data': 'Provide a table listing all column names, data types, description, and PII information?',  # DATA CATALOGUE
 
     }
 
@@ -317,6 +320,8 @@ def business(model, metatag_system_prompt, init_prompt):
         for q in questions:
             prompt = "\n".join([message["content"]
                                 for message in conversation_history])
+            # print([message["content"]
+            #        for message in conversation_history])
             prompt += '\n' + questions[q]
 
             # print(prompt)
@@ -329,8 +334,8 @@ def business(model, metatag_system_prompt, init_prompt):
                 st.write(output)
                 if q in ['README', 'Code']:
                     st.button("Download " + q)
-            st.sidebar.download_button(
-                "Download Responses", data=storeResponses)
+        st.sidebar.download_button(
+            "Download Responses", data=storeResponses)
 
 
 def tech(model, metatag_system_prompt, init_prompt):
@@ -353,9 +358,11 @@ def tech(model, metatag_system_prompt, init_prompt):
     for uploaded_file in uploaded_files:
         code_txt = uploaded_file.getvalue()
         content = str(uploaded_file.name) + " " + str(code_txt)
+        dataframe = pd.read_csv(uploaded_file)
         conversation_history.append({"role": "user", "content": content})
         st.write("filename:", uploaded_file.name)
-        st.code(code_txt.decode("utf-8"), language='python')
+        st.table(dataframe)
+        # st.code(code_txt.decode("utf-8"), language='python')
 
     st.sidebar.markdown("----")
 
@@ -363,8 +370,10 @@ def tech(model, metatag_system_prompt, init_prompt):
     questions = {
 
 
-        'SQL table': 'create a SQL table based on the above data in proper code format, breaking it into several tables with primary keys.',
-        'SQL code': 'Provide the SQL code to create tables with the columns in the ACTUAL_COLUMN column in the data splitting the tables with assumed primary and foreign keys',
+        'SQL table': 'create a SQL schema based on the above data, breaking it into meaningful tables with primary keys and also provide a tabular view of those tables.',
+
+        # 'Table': "Provide the tabular view of the above schema",
+        # 'SQL code': 'Provide the SQL code to create tables with the columns in the ACTUAL_COLUMN column in the data splitting the tables with assumed primary and foreign keys',
         # 'Data Model': 'Can you show the data model in tabular format if we create several SQL tables based on this data with primary key relationships in details',
         'Tabular Data': 'Can you show all the column names, their datatypes in SQL format, brief description and PII in a nice tabular format'
     }
@@ -403,48 +412,48 @@ def tech(model, metatag_system_prompt, init_prompt):
             "Download Responses", data=storeResponses)
 
 
-def customUser(model):
-    if "content_generated" not in st.session_state:
-        st.session_state.content_generated = False
+# def customUser(model):
+#     if "content_generated" not in st.session_state:
+#         st.session_state.content_generated = False
 
-    conversation_history = []
+#     conversation_history = []
 
-    st.title("SQL Code Converter")
-    # downloadButton = st.sidebar.download_button("Download Responses")
-    bytes_data = None
-    uploaded_files = st.file_uploader(
-        "Upload database tables", accept_multiple_files=True)
-    for file in uploaded_files:
-        bytes_data = file.read()
-        # st.write("filename:", file.name)
+#     st.title("SQL Code Converter")
+#     # downloadButton = st.sidebar.download_button("Download Responses")
+#     bytes_data = None
+#     uploaded_files = st.file_uploader(
+#         "Upload database tables", accept_multiple_files=True)
+#     for file in uploaded_files:
+#         bytes_data = file.read()
+#         # st.write("filename:", file.name)
 
-    question = st.text_area(
-        label="Enter SQL script", key="question", height=100)
-    submit = st.button(label='Submit')
+#     question = st.text_area(
+#         label="Enter SQL script", key="question", height=100)
+#     submit = st.button(label='Submit')
 
-    if uploaded_files is not None:
-        custom_user_prompt = f"""You are a data assistant. Your task is to do the following: 
-                                - You are given two SQL tables created with the following SQL code:
-                                        {bytes_data}
-                                - Examine the SQL code provided to you: {question}
-                                - The provided SQL code makes a query to the first table. You should respond with an equivalent SQL code that does the exact same thing from the second table.
-                                - Ask to clarify if you did not understand the question
-                                  """
-    else:
-        pass
-    conversation_history.append(
-        {"role": "assistant", "content": custom_user_prompt})
-    questions = {
-        "user_question": question
-    }
-    if submit or st.session_state.content_generated:
-        for q in questions:
-            prompt = "\n".join([message["content"]
-                                for message in conversation_history])
-            prompt += '\n' + questions[q]
+#     if uploaded_files is not None:
+#         custom_user_prompt = f"""You are an expert SQL developer. Your task is to do the following:
+#                                 - You are given two databases with one or more tables inside created with the following format:
+#                                         {bytes_data}
+#                                 - Examine the SQL code provided to you: {question}
+#                                 - The provided SQL code makes a query to the first database. You should respond with an equivalent SQL code that does the exact same thing from the second database.
+#                                 - Ask to clarify if you did not understand the question
+#                                   """
+#     else:
+#         pass
+#     conversation_history.append(
+#         {"role": "assistant", "content": custom_user_prompt})
+#     questions = {
+#         "user_question": question
+#     }
+#     if submit or st.session_state.content_generated:
+#         for q in questions:
+#             prompt = "\n".join([message["content"]
+#                                 for message in conversation_history])
+#             prompt += '\n' + questions[q]
 
-            print(prompt)
-            output = generate_response(
-                custom_user_prompt, prompt, model)
-            with st.expander("SQL code:"):
-                st.code(output, language='sql')
+#             print(prompt)
+#             output = generate_response(
+#                 custom_user_prompt, prompt, model)
+#             with st.expander("SQL code:"):
+#                 st.code(output, language='sql')

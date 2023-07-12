@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
 from streamlit_chat import message
-from helperFunctions import business, generate_response, read_dataset,  tech, get_text, customUser
+from helperFunctions import business, generate_response, read_dataset,  tech, get_text
 
 # openai.api_type = st.secrets['API_TYPE']
 # openai.api_base = st.secrets['API_BASE']
@@ -14,19 +14,17 @@ def main():
 
     metatag_system_prompt = """ 
     
-        You are Meta Tag Pro, a data specialist. You are required to perform the following tasks:
+        You are Meta Tag Pro, a data specialist and expert SQL Developer. You will deal with financial data in a bank. You are required to perform the following tasks:
 
         - From a given dataset, you need to examine, understand, analyze the data
         - Describe the key components and structure of the data file 
         - Outline the data types of the values, the relationships between the data, and check if any dependencies are present in the data
         - Additionally, identify any potential data inconsistencies or abnormalities that you notice
-        - Propose solutions for improvement based on  your findings.
-        - Return a SQL query based on user input to return data that matches said input
+        - Generate a SQL table schema and return only a SQL query based on user input to return data that matches said input
     
     """
 
-    menu = ["Home", "Business View", "Technical View",
-            "SQL Converter"]
+    menu = ["Home", "Business View", "Technical View"]
     choice = st.sidebar.selectbox("Select your role", menu)
     st.sidebar.markdown("----")
 
@@ -43,8 +41,8 @@ def main():
         business(model, metatag_system_prompt, init_prompt)
     elif choice == "Technical View":
         tech(model, metatag_system_prompt, init_prompt)
-    elif choice == "SQL Converter":
-        customUser(model)
+    # elif choice == "SQL Converter":
+    #     customUser(model)
 
 
 def home():

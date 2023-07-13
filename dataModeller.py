@@ -10,7 +10,7 @@ from helperFunctions import business, generate_response, read_dataset,  tech, ge
 
 
 def main():
-    data_folder = "HR/HRdata"
+    # data_folder = "HR/HRdata"
 
     metatag_system_prompt = """ 
     

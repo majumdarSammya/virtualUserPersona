@@ -2,6 +2,7 @@ import streamlit as st
 import os
 import pandas as pd
 import openai
+import streamlit.components.v1 as components
 
 openai.api_key = st.secrets["API_KEY"]
 
@@ -280,6 +281,16 @@ def read_dataset(folder_path):
 #             "Download Responses", data=storeResponsesTechUserTwo)
 
 
+def mermaid_chart(markdown_code):
+    html_code = f"""
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <div class="mermaid">{markdown_code}</div>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({{startOnLoad:true}});</script>
+    """
+    return html_code
+
+
 def business(model, metatag_system_prompt, init_prompt):
     if "content_generated" not in st.session_state:
         st.session_state.content_generated = False
@@ -308,7 +319,7 @@ def business(model, metatag_system_prompt, init_prompt):
 
         'Summary': 'Give me a brief summary of the data in bullet points without mentioning the column names',
         'Use_Case': 'Give me the potential use cases of this data?',
-        "Relationships": 'Are there any relationships among the values inside ACTUAL_COLUMN in the data?',
+        "Relationships": 'Are there any relationships within the columns of the data?',
         'Tabular Data': 'Provide a table listing all column names, data types, description, and PII information?',  # DATA CATALOGUE
 
     }
@@ -316,6 +327,7 @@ def business(model, metatag_system_prompt, init_prompt):
     # for the above table -> the input to the 'get SQL code'
     storeResponses = ""
     qCount = 1
+    relationshipResponse = ""
     if st.sidebar.button("Generate Contents") or st.session_state.content_generated:
         for q in questions:
             prompt = "\n".join([message["content"]
@@ -334,8 +346,63 @@ def business(model, metatag_system_prompt, init_prompt):
                 st.write(output)
                 if q in ['README', 'Code']:
                     st.button("Download " + q)
+
+            # add relationships response to a variable
+            if list(questions.values()).index(questions[q]) == 'Relationships':
+                relationshipResponse += output
+
         st.sidebar.download_button(
             "Download Responses", data=storeResponses)
+
+        # create context prompt to generate md code for mermaid.js
+        # entityRelationshipContext = f"""
+
+        #     You are a data modeller. You have to create markdown code for Entity Relationship diagram for mermaid.js
+        #     library using the following information:
+        #             {relationshipResponse}
+
+        #             """
+        # # user prompt to grab md code to use in chat completion endpoint
+        # markdownPrompt = "Create the markdown code for ERD for mermaid.js library"
+
+        # # generate the markdown code for the ERD
+        # entityDiagramCode = generate_response(
+        #     entityRelationshipContext, markdownPrompt, model)
+
+        # # display ERD in html
+        # # render HTML
+        # code = """
+        #     ```mermaid
+        #     erDiagram
+        #         TRN_REF_NO as Transaction Reference Number {
+        #             title: "TRN_REF_NO"
+        #             (primary key)
+        #         }
+        #         AC_NO as Account Number {
+        #             title: "AC_NO"
+        #             (foreign key)
+        #         }
+        #         RELATED_CUSTOMER as Related Customer {
+        #             title: "RELATED_CUSTOMER"
+        #             (foreign key)
+        #         }
+        #         RELATED_ACCOUNT as Related Account {
+        #             title: "RELATED_ACCOUNT"
+        #             (foreign key)
+        #         }
+        #         RELATED_REFERENCE as Related Reference {
+        #             title: "RELATED_REFERENCE"
+        #             (foreign key)
+        #         }
+        #         TRN_REF_NO }|--||--{ AC_NO
+        #         TRN_REF_NO }|--||--{ RELATED_CUSTOMER
+        #         TRN_REF_NO }|--||--{ RELATED_ACCOUNT
+        #         TRN_REF_NO }|--||--{ RELATED_REFERENCE
+        #     ```
+        #     """
+        # components.html(
+        #     mermaid_chart(code), width=500, height=500
+        # )
 
 
 def tech(model, metatag_system_prompt, init_prompt):

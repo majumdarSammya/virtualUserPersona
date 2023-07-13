@@ -32,15 +32,15 @@ def main():
                              ('gpt-3.5-turbo', 'gpt-4'))
     # data_string = read_dataset(demo_folder)
     # dataStringNew = read_dataset(data_folder)
-    init_prompt = generate_response(
-        metatag_system_prompt, dataStringNew, model)
+    # init_prompt = generate_response(
+    #     metatag_system_prompt, dataStringNew, model)
 
     if choice == "Home":
         home()
     elif choice == "Business View":
-        business(model, metatag_system_prompt, init_prompt)
+        business(model, metatag_system_prompt)
     elif choice == "Technical View":
-        tech(model, metatag_system_prompt, init_prompt)
+        tech(model, metatag_system_prompt)
     # elif choice == "SQL Converter":
     #     customUser(model)
 

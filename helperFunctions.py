@@ -291,7 +291,7 @@ def mermaid_chart(markdown_code):
     return html_code
 
 
-def business(model, metatag_system_prompt, init_prompt):
+def business(model, metatag_system_prompt):
     if "content_generated" not in st.session_state:
         st.session_state.content_generated = False
 
@@ -405,7 +405,7 @@ def business(model, metatag_system_prompt, init_prompt):
         # )
 
 
-def tech(model, metatag_system_prompt, init_prompt):
+def tech(model, metatag_system_prompt):
     if "content_generated" not in st.session_state:
         st.session_state.content_generated = False
 

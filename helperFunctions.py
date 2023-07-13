@@ -200,27 +200,27 @@ def get_text():
     return input_text
 
 
-def read_dataset(folder_path):
-    dataset_as_string = {}
-    for filename in os.listdir(folder_path):
-        if filename.endswith('.csv'):
-            file_path = os.path.join(folder_path, filename)
-            df = pd.read_csv(file_path)
-            non_null_rows = df.dropna().iloc[:5]
-            dataset_as_string[filename] = non_null_rows.to_csv(
-                index=False, sep=',')
-        elif filename.endswith('.xlsx'):
-            excel_data = pd.read_excel
-            for sheet_name, sheet_data in excel_data.items():
-                sheet_data = sheet_data.dropna().iloc[:5]
-                dataset_as_string[sheet_name] = sheet_data.to_csv(
-                    index=False, sep=',')
+# def read_dataset(folder_path):
+#     dataset_as_string = {}
+#     for filename in os.listdir(folder_path):
+#         if filename.endswith('.csv'):
+#             file_path = os.path.join(folder_path, filename)
+#             df = pd.read_csv(file_path)
+#             non_null_rows = df.dropna().iloc[:5]
+#             dataset_as_string[filename] = non_null_rows.to_csv(
+#                 index=False, sep=',')
+#         elif filename.endswith('.xlsx'):
+#             excel_data = pd.read_excel
+#             for sheet_name, sheet_data in excel_data.items():
+#                 sheet_data = sheet_data.dropna().iloc[:5]
+#                 dataset_as_string[sheet_name] = sheet_data.to_csv(
+#                     index=False, sep=',')
 
-    data_string = ""
-    for table_name, table_string in dataset_as_string.items():
-        data_string += f"Table: {table_name}" + table_string + "\n"
+#     data_string = ""
+#     for table_name, table_string in dataset_as_string.items():
+#         data_string += f"Table: {table_name}" + table_string + "\n"
 
-    return data_string
+#     return data_string
 
 # REDACTED TECHNICAL USER TWO
 

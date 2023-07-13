@@ -31,7 +31,7 @@ def main():
     model = st.sidebar.radio('Pick a model version',
                              ('gpt-3.5-turbo', 'gpt-4'))
     # data_string = read_dataset(demo_folder)
-    dataStringNew = read_dataset(data_folder)
+    # dataStringNew = read_dataset(data_folder)
     init_prompt = generate_response(
         metatag_system_prompt, dataStringNew, model)
 

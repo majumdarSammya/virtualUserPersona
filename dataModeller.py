@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
 from streamlit_chat import message
-from helperFunctions import business, generate_response, read_dataset,  tech, get_text
+from helperFunctions import business, generate_response, tech, get_text
 
 # openai.api_type = st.secrets['API_TYPE']
 # openai.api_base = st.secrets['API_BASE']
@@ -10,7 +10,7 @@ from helperFunctions import business, generate_response, read_dataset,  tech, ge
 
 
 def main():
-    data_folder = "HR/HRdata"
+    # data_folder = "HR/HRdata"
 
     metatag_system_prompt = """ 
     
@@ -31,7 +31,7 @@ def main():
     model = st.sidebar.radio('Pick a model version',
                              ('gpt-3.5-turbo', 'gpt-4'))
     # data_string = read_dataset(demo_folder)
-    dataStringNew = read_dataset(data_folder)
+    # dataStringNew = read_dataset(data_folder)
     init_prompt = generate_response(
         metatag_system_prompt, dataStringNew, model)
 

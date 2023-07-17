@@ -4,3 +4,4 @@ dataModeller.py
 Baltimore CyberTrust Root.crt
 .streamlit/secrets.toml
 helperFunctions.py
+.streamlit/secrets.toml

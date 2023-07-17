@@ -23,13 +23,23 @@ def main():
         - Generate a SQL table schema and return only a SQL query based on user input to return data that matches said input
     
     """
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.write(" ")
-    with col2:
+
+    st.markdown(
+        """
+    <style>
+        [data-testid=stSidebar] [data-testid=stImage]{
+            text-align: center;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+    </style>
+    """, unsafe_allow_html=True
+    )
+
+    with st.sidebar:
         st.image("heraLogo.png", width=75)
-    with col3:
-        st.write(" ")
 
     menu = ["Home", "Business View", "Technical View"]
     choice = st.sidebar.selectbox("Select your role", menu)

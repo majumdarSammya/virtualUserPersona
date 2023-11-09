@@ -1,27 +1,21 @@
 import streamlit as st
-import os
 import pandas as pd
 import openai
-import streamlit.components.v1 as components
-
-openai.api_key = st.secrets["API_KEY"]
 
 
 @st.cache_data
 def generate_response(system_prompt, user_prompt, model):
-
     response = openai.ChatCompletion.create(
         messages=[
-            {'role': 'system', 'content': system_prompt},
-            {'role': 'user', 'content': user_prompt},
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
         ],
-        model=model,
+        engine=model,
         max_tokens=2048,
-        temperature=0.3
-        # engine='demo3'
+        temperature=0.3,
     )
 
-    return response['choices'][0]['message']['content'].strip()
+    return response["choices"][0]["message"]["content"].strip()
 
 
 # def business(folder, model, metatag_system_prompt, init_prompt):
@@ -301,7 +295,8 @@ def business(model, metatag_system_prompt):
     st.sidebar.markdown("----")
 
     uploaded_files = st.sidebar.file_uploader(
-        "Select the source code to interpret", accept_multiple_files=True)
+        "Select the source code to interpret", accept_multiple_files=True
+    )
 
     for uploaded_file in uploaded_files:
         code_txt = uploaded_file.getvalue()
@@ -316,12 +311,10 @@ def business(model, metatag_system_prompt):
 
     # Predefined question set
     questions = {
-
-        'Summary': 'Give me a brief summary of the data in bullet points without mentioning the column names',
-        'Use_Case': 'Give me the potential use cases of this data?',
-        "Relationships": 'Are there any relationships within the columns of the data?',
-        'Tabular Data': 'Provide a table listing all column names, data types, description, and PII information?',  # DATA CATALOGUE
-
+        "Summary": "Give me a brief summary of the data in bullet points without mentioning the column names",
+        "Use_Case": "Give me the potential use cases of this data?",
+        "Relationships": "Are there any relationships within the columns of the data?",
+        "Tabular Data": "Provide a table listing all column names, data types, description, and PII information?",  # DATA CATALOGUE
     }
 
     # for the above table -> the input to the 'get SQL code'
@@ -330,29 +323,27 @@ def business(model, metatag_system_prompt):
     relationshipResponse = ""
     if st.sidebar.button("Generate Contents") or st.session_state.content_generated:
         for q in questions:
-            prompt = "\n".join([message["content"]
-                                for message in conversation_history])
+            prompt = "\n".join([message["content"] for message in conversation_history])
             # print([message["content"]
             #        for message in conversation_history])
-            prompt += '\n' + questions[q]
+            prompt += "\n" + questions[q]
 
             # print(prompt)
-            output = generate_response(
-                metatag_system_prompt, prompt, model)
-            storeResponses += f'Q{qCount}. ' + \
-                questions[q] + '\n\n' + output + '\n\n\n\n'
+            output = generate_response(metatag_system_prompt, prompt, model)
+            storeResponses += (
+                f"Q{qCount}. " + questions[q] + "\n\n" + output + "\n\n\n\n"
+            )
             qCount += 1
             with st.expander(questions[q]):
                 st.write(output)
-                if q in ['README', 'Code']:
+                if q in ["README", "Code"]:
                     st.button("Download " + q)
 
             # add relationships response to a variable
-            if list(questions.values()).index(questions[q]) == 'Relationships':
+            if list(questions.values()).index(questions[q]) == "Relationships":
                 relationshipResponse += output
 
-        st.sidebar.download_button(
-            "Download Responses", data=storeResponses)
+        st.sidebar.download_button("Download Responses", data=storeResponses)
 
         # create context prompt to generate md code for mermaid.js
         # entityRelationshipContext = f"""
@@ -414,13 +405,14 @@ def tech(model, metatag_system_prompt):
     st.title("Technical View")
     st.sidebar.markdown("----")
 
-    query = st.sidebar.text_input('Input your query')
+    query = st.sidebar.text_input("Input your query")
     queryButton = st.sidebar.button("Get SQL code")
 
-    st.sidebar.markdown('----')
+    st.sidebar.markdown("----")
 
     uploaded_files = st.sidebar.file_uploader(
-        "Select the source code to interpret", accept_multiple_files=True)
+        "Select the source code to interpret", accept_multiple_files=True
+    )
 
     for uploaded_file in uploaded_files:
         code_txt = uploaded_file.getvalue()
@@ -435,14 +427,11 @@ def tech(model, metatag_system_prompt):
 
     # Predefined question set
     questions = {
-
-
-        'SQL table': 'create a SQL schema based on the above data, breaking it into meaningful tables with primary keys and also provide a tabular view of those tables.',
-
+        "SQL table": "create a SQL schema based on the above data, breaking it into meaningful tables with primary keys and also provide a tabular view of those tables.",
         # 'Table': "Provide the tabular view of the above schema",
         # 'SQL code': 'Provide the SQL code to create tables with the columns in the ACTUAL_COLUMN column in the data splitting the tables with assumed primary and foreign keys',
         # 'Data Model': 'Can you show the data model in tabular format if we create several SQL tables based on this data with primary key relationships in details',
-        'Tabular Data': 'Can you show all the column names, their datatypes in SQL format, brief description and PII in a nice tabular format'
+        "Tabular Data": "Can you show all the column names, their datatypes in SQL format, brief description and PII in a nice tabular format",
     }
 
     # for the above table -> the input to the 'get SQL code'
@@ -450,33 +439,28 @@ def tech(model, metatag_system_prompt):
     qCount = 1
     if st.sidebar.button("Generate Contents") or st.session_state.content_generated:
         for q in questions:
-            prompt = "\n".join([message["content"]
-                                for message in conversation_history])
-            prompt += '\n' + questions[q]
+            prompt = "\n".join([message["content"] for message in conversation_history])
+            prompt += "\n" + questions[q]
 
             # print(prompt)
-            output = generate_response(
-                metatag_system_prompt, prompt, model)
-            storeResponses += f'Q{qCount}. ' + \
-                questions[q] + '\n\n' + output + '\n\n\n\n'
+            output = generate_response(metatag_system_prompt, prompt, model)
+            storeResponses += (
+                f"Q{qCount}. " + questions[q] + "\n\n" + output + "\n\n\n\n"
+            )
             qCount += 1
             with st.expander(questions[q]):
                 st.write(output)
-                if q in ['README', 'Code']:
+                if q in ["README", "Code"]:
                     st.button("Download " + q)
-        st.sidebar.download_button(
-            "Download Responses", data=storeResponses)
+        st.sidebar.download_button("Download Responses", data=storeResponses)
 
     if queryButton or st.session_state.content_generated:
-
-        prompt = "\n".join([message["content"]
-                           for message in conversation_history])
-        prompt += '\n' + query
-        with st.expander('SQL code:'):
+        prompt = "\n".join([message["content"] for message in conversation_history])
+        prompt += "\n" + query
+        with st.expander("SQL code:"):
             st.write(generate_response(metatag_system_prompt, prompt, model))
 
-        st.sidebar.download_button(
-            "Download Responses", data=storeResponses)
+        st.sidebar.download_button("Download Responses", data=storeResponses)
 
 
 # def customUser(model):

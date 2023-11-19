@@ -5,6 +5,12 @@ from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 import json
 
+
+# to change from GPT4 to GPT4-Turbo
+# in model selection
+# choose: gpt-4-1106-preview
+
+
 with open("config.json") as f:
     config = json.load(f)
     key_vault_url = config["KEY_VAULT_URL"]

@@ -29,7 +29,7 @@ with open("config.json") as f:
 # openai.api_base = azure_openai_endpoint
 # openai.api_key = azure_openai_key
 
-openai.api_key = "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"
+openai.api_key = azure_openai_key
 
 def main():
     # data_folder = "HR/HRdata"

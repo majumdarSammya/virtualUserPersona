@@ -18,17 +18,18 @@ with open("config.json") as f:
     deployment_gpt4 = config["gpt4"]
 
 
-credential = DefaultAzureCredential()
+# credential = DefaultAzureCredential()
+#
+# secret_client = SecretClient(vault_url=key_vault_url, credential=credential)
+# azure_openai_endpoint = secret_client.get_secret("oai-hera-uksouth-endpoint").value
+# azure_openai_key = secret_client.get_secret("oai-hera-uksouth-key").value
+#
+# openai.api_type = "azure"
+# openai.api_version = "2023-05-15"
+# openai.api_base = azure_openai_endpoint
+# openai.api_key = azure_openai_key
 
-secret_client = SecretClient(vault_url=key_vault_url, credential=credential)
-azure_openai_endpoint = secret_client.get_secret("oai-hera-uksouth-endpoint").value
-azure_openai_key = secret_client.get_secret("oai-hera-uksouth-key").value
-
-openai.api_type = "azure"
-openai.api_version = "2023-05-15"
-openai.api_base = azure_openai_endpoint
-openai.api_key = azure_openai_key
-
+openai.api_key = "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"
 
 def main():
     # data_folder = "HR/HRdata"

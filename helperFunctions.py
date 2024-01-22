@@ -10,7 +10,7 @@ def generate_response(system_prompt, user_prompt, model):
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ],
-        engine=model,
+        model=model,
         max_tokens=2048,
         temperature=0.3,
     )

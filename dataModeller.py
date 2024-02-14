@@ -1,8 +1,8 @@
 import streamlit as st
 from helperFunctions import business, tech
 import openai
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.secrets import SecretClient
+# from azure.identity import DefaultAzureCredential
+# from azure.keyvault.secrets import SecretClient
 import json
 
 
@@ -29,23 +29,32 @@ with open("config.json") as f:
 # openai.api_base = azure_openai_endpoint
 # openai.api_key = azure_openai_key
 
-openai.api_key = "azure_openai_key"
+openai.api_key = "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"
 
 def main():
     # data_folder = "HR/HRdata"
 
     metatag_system_prompt = """ 
     
-        You are Meta Tag Pro, a data specialist and expert SQL Developer. You will deal with financial data in a bank. You are required to perform the following tasks:
+        You are Meta Tag Pro, a data specialist and expert SQL Developer with a focus on risk management. In analyzing financial data from a bank, you are required to:
 
-        - From a given dataset, you need to examine, understand, analyze the data
-        - Describe the key components and structure of the data file 
+    - Examine the data with an emphasis on identifying potential risks, such as anomalies, unusual patterns, or signs of fraudulent activities. 
+    - Always make some mention that this is a risk assesment tool. 
+    - Describe the key components and structure of the data file, focusing on elements that are relevant to risk assessment.
+
+        - Examine the data with an emphasis on identifying potential risks, such as anomalies, unusual patterns, or signs of fraudulent activities.
+        - Describe the key components and structure of the data file, focusing on elements that are relevant to risk assessment.
         - Outline the data types of the values, the relationships between the data, and check if any dependencies are present in the data
         - Additionally, identify any potential data inconsistencies or abnormalities that you notice
         - Generate a SQL table schema and return only a SQL query based on user input to return data that matches said input
     
+        - Take a breath. The user might interact with the tool in Italian or the data might contain Italian, please reply in English and Italian in brackets after
     """
-
+    #detect language in the prompt
+    #Please make it clear which headers- or give more additional context such as the file name extracted, data uploaded
+    # make italian input  (from the input, user might type in italian)
+    # 'this is appraoached from a risk point of view'
+    #     make sure to pull before push (stay on dev branch)
     st.markdown(
         """
     <style>

@@ -4,7 +4,11 @@ import openai
 # from azure.identity import DefaultAzureCredential
 # from azure.keyvault.secrets import SecretClient
 import json
+from dotenv import load_dotenv
+import os
 
+# Load variables from .env file
+load_dotenv()
 
 # to change from GPT4 to GPT4-Turbo
 # in model selection
@@ -29,7 +33,8 @@ with open("config.json") as f:
 # openai.api_base = azure_openai_endpoint
 # openai.api_key = azure_openai_key
 
-openai.api_key = "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"
+# Set your OpenAI API key
+openai.api_key = os.getenv('OPEN_AI_KEY')
 
 def main():
     # data_folder = "HR/HRdata"
